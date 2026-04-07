@@ -36,6 +36,7 @@
     "LICENSE"
   ],
   "scripts": {
+    "prepare": "npm run build",
     "build": "tsc && node -e \"require('fs').chmodSync('build/server.js', '755')\" && mkdir -p dist && cp -r build/* dist/",
     "watch": "tsc --watch",
     "inspector": "npm run build && npx fastmcp inspect dist/server.js",
