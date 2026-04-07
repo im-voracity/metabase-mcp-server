@@ -18,7 +18,7 @@ export function addAdditionalTools(server: any, metabaseClient: MetabaseClient) 
     description: "Retrieve all items (cards, dashboards) within a Metabase collection - use this to explore collection contents, organize analytical assets, or understand content structure",
     metadata: { isEssential: true, isRead: true },
     parameters: z.object({
-      collection_id: z.number().describe("Collection ID"),
+      collection_id: z.coerce.number().describe("Collection ID"),
     }).strict(),
     execute: async (args: { collection_id: number }) => {
       try {
@@ -55,9 +55,9 @@ export function addAdditionalTools(server: any, metabaseClient: MetabaseClient) 
     metadata: { isWrite: true },
     parameters: z.object({
       item_type: z.enum(["card", "dashboard"]).describe("Item type"),
-      item_id: z.number().describe("Item ID"),
+      item_id: z.coerce.number().describe("Item ID"),
       collection_id: z
-        .union([z.number(), z.null()])
+        .union([z.coerce.number(), z.null()])
         .describe("Target collection ID (null for root)"),
     }).strict(),
     execute: async (args: {
@@ -103,8 +103,8 @@ export function addAdditionalTools(server: any, metabaseClient: MetabaseClient) 
       type: z.string().optional().describe("Filter by type (card, dashboard, collection, table, etc.)"),
       models: z.array(z.string()).optional().describe("Filter by model types"),
       archived: z.boolean().optional().describe("Include archived items"),
-      table_db_id: z.number().optional().describe("Filter by database ID"),
-      limit: z.number().optional().describe("Maximum number of results"),
+      table_db_id: z.coerce.number().optional().describe("Filter by database ID"),
+      limit: z.coerce.number().optional().describe("Maximum number of results"),
     }).strict(),
     execute: async (args: any) => {
       try {
@@ -174,7 +174,7 @@ export function addAdditionalTools(server: any, metabaseClient: MetabaseClient) 
     parameters: z.object({
       name: z.string().describe("Name of the collection (required)"),
       description: z.string().optional().describe("Description of the collection"),
-      parent_id: z.number().optional().describe("Parent collection ID for nested organization"),
+      parent_id: z.coerce.number().optional().describe("Parent collection ID for nested organization"),
       color: z.string().optional().describe("Color for the collection (hex code)"),
     }).strict(),
     execute: async (args: { name: string; description?: string; parent_id?: number; color?: string }) => {
@@ -206,10 +206,10 @@ export function addAdditionalTools(server: any, metabaseClient: MetabaseClient) 
     description: "Update collection properties including name, description, and organization - use this to maintain metadata, reorganize hierarchies, or update structure",
     metadata: { isWrite: true },
     parameters: z.object({
-      collection_id: z.number().describe("The ID of the collection to update"),
+      collection_id: z.coerce.number().describe("The ID of the collection to update"),
       name: z.string().optional().describe("New name for the collection"),
       description: z.string().optional().describe("New description for the collection"),
-      parent_id: z.number().optional().describe("New parent collection ID"),
+      parent_id: z.coerce.number().optional().describe("New parent collection ID"),
       color: z.string().optional().describe("New color for the collection"),
     }).strict(),
     execute: async (args: { collection_id: number; name?: string; description?: string; parent_id?: number; color?: string }) => {
@@ -238,7 +238,7 @@ export function addAdditionalTools(server: any, metabaseClient: MetabaseClient) 
     description: "Permanently delete a Metabase collection - use with caution as this affects contained content and cannot be undone",
     metadata: { isWrite: true },
     parameters: z.object({
-      collection_id: z.number().describe("The ID of the collection to delete"),
+      collection_id: z.coerce.number().describe("The ID of the collection to delete"),
     }).strict(),
     execute: async (args: { collection_id: number }) => {
       try {

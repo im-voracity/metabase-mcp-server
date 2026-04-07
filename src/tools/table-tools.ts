@@ -23,7 +23,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     metadata: { isEssential: true, isRead: true },
     parameters: z.object({
       ids: z
-        .array(z.number())
+        .array(z.coerce.number())
         .optional()
         .describe("Optional list of table IDs to filter by"),
     }).strict(),
@@ -57,7 +57,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     description: "Bulk update multiple Metabase tables with same configuration - use this to apply consistent settings, update metadata, or modify table properties efficiently",
     metadata: { isWrite: true },
     parameters: z.object({
-      ids: z.array(z.number().int().min(1)).describe("IDs of tables to update"),
+      ids: z.array(z.coerce.number().int().min(1)).describe("IDs of tables to update"),
       display_name: z.string().min(1).optional().describe("New display name for the tables"),
       description: z.string().optional().describe("New description"),
       caveats: z.string().optional().describe("Caveats"),
@@ -67,7 +67,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
       data_layer: z.string().optional().describe("Data layer"),
       data_source: z.string().optional().describe("Data source"),
       owner_email: z.string().optional().describe("Owner email"),
-      owner_user_id: z.number().int().optional().describe("Owner user ID"),
+      owner_user_id: z.coerce.number().int().optional().describe("Owner user ID"),
       show_in_getting_started: z.boolean().optional().describe("Show table in getting started"),
       entity_type: z.string().optional().describe("Entity type"),
     }).strict(),
@@ -118,7 +118,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     description: "Retrieve comprehensive table information including schema, fields, and metadata - use this to understand structure, explore fields, or get configuration details",
     metadata: { isEssential: true, isRead: true },
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
+      table_id: z.coerce.number().describe("Table ID"),
       include_sensitive_fields: z
         .boolean()
         .optional()
@@ -171,7 +171,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     description: "Update table configuration including display name, description, and field settings - use this to customize presentation, update metadata, or configure data model",
     metadata: { isWrite: true },
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
+      table_id: z.coerce.number().describe("Table ID"),
       display_name: z.string().min(1).optional().describe("New display name"),
       description: z.string().optional().describe("New description"),
       caveats: z.string().optional().describe("Caveats"),
@@ -182,7 +182,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
       data_layer: z.string().optional().describe("Data layer"),
       data_source: z.string().optional().describe("Data source"),
       owner_email: z.string().optional().describe("Owner email"),
-      owner_user_id: z.number().int().optional().describe("Owner user ID"),
+      owner_user_id: z.coerce.number().int().optional().describe("Owner user ID"),
       show_in_getting_started: z.boolean().optional().describe("Show table in getting started"),
       entity_type: z.string().optional().describe("Entity type"),
     }).strict(),
@@ -230,7 +230,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     name: "get_table_fks",
     description: "Retrieve foreign key relationships for a table - use this to understand data connections, build joins, or explore table dependencies",
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
+      table_id: z.coerce.number().describe("Table ID"),
     }).strict(),
     execute: async (args: { table_id: number }) => {
       try {
@@ -263,7 +263,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     name: "get_table_query_metadata",
     description: "Retrieve query-optimized table metadata for building dynamic queries - use this when constructing queries or building query interfaces",
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
+      table_id: z.coerce.number().describe("Table ID"),
       include_sensitive_fields: z.boolean().optional(),
       include_hidden_fields: z.boolean().optional(),
       include_editable_data_model: z.boolean().optional(),
@@ -308,7 +308,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     name: "get_table_related",
     description: "Find tables and entities related through relationships or schemas - use this to discover connected data, find related content, or understand context",
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
+      table_id: z.coerce.number().describe("Table ID"),
     }).strict(),
     execute: async (args: { table_id: number }) => {
       try {
@@ -338,7 +338,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     name: "get_card_table_fks",
     description: "Retrieve foreign keys for a card's virtual table - use this to understand relationships in card-based queries or saved question tables",
     parameters: z.object({
-      card_id: z.number().describe("Card ID for the virtual table"),
+      card_id: z.coerce.number().describe("Card ID for the virtual table"),
     }).strict(),
     execute: async (args: { card_id: number }) => {
       try {
@@ -368,7 +368,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     name: "get_card_table_query_metadata",
     description: "Retrieve query metadata for a card's virtual table - use this to build queries on top of saved questions or treat cards as queryable tables",
     parameters: z.object({
-      card_id: z.number().describe("Card ID for the virtual table"),
+      card_id: z.coerce.number().describe("Card ID for the virtual table"),
     }).strict(),
     execute: async (args: { card_id: number }) => {
       try {
@@ -402,7 +402,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     name: "append_csv_to_table",
     description: "Add new rows from CSV content to existing table - use this for incremental data loading, updates, or importing additional records",
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
+      table_id: z.coerce.number().describe("Table ID"),
       filename: z.string().describe("CSV filename (for metadata only)"),
       file_content: z.string().describe("CSV file content as string"),
     }).strict(),
@@ -442,7 +442,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     name: "discard_table_field_values",
     description: "Clear cached field values to force fresh data loading - use this when table data has changed or cached values are stale",
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
+      table_id: z.coerce.number().describe("Table ID"),
     }).strict(),
     execute: async (args: { table_id: number }) => {
       try {
@@ -476,9 +476,9 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     description: "Change display order of table fields for better organization - use this to arrange fields logically, group columns, or improve presentation",
     metadata: { isWrite: true },
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
+      table_id: z.coerce.number().describe("Table ID"),
       field_order: z
-        .array(z.number())
+        .array(z.coerce.number())
         .describe("Array of field IDs in desired order"),
     }).strict(),
     execute: async (args: { table_id: number; field_order: number[] }) => {
@@ -513,7 +513,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     name: "replace_table_csv",
     description: "Completely replace table data with new CSV content - use this for full data refreshes, model updates, or complete table replacements",
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
+      table_id: z.coerce.number().describe("Table ID"),
       csv_file: z.string().describe("CSV file content as string"),
     }).strict(),
     execute: async (args: { table_id: number; csv_file: string }) => {
@@ -547,7 +547,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     name: "rescan_table_field_values",
     description: "Trigger rescan to refresh field values cache with current data - use this to update dropdown options, statistics, or filter values",
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
+      table_id: z.coerce.number().describe("Table ID"),
     }).strict(),
     execute: async (args: { table_id: number }) => {
       try {
@@ -579,7 +579,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     name: "sync_table_schema",
     description: "Initiate schema sync for specific table to update metadata - use this when table structure has changed and needs recognition",
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
+      table_id: z.coerce.number().describe("Table ID"),
     }).strict(),
     execute: async (args: { table_id: number }) => {
       try {
@@ -615,8 +615,8 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     description: "Retrieve sample data from table for preview and analysis - use this to examine content, verify quality, or understand data patterns",
     metadata: { isRead: true },
     parameters: z.object({
-      table_id: z.number().describe("Table ID"),
-      limit: z.number().optional().describe("Row limit (default 1000)"),
+      table_id: z.coerce.number().describe("Table ID"),
+      limit: z.coerce.number().optional().describe("Row limit (default 1000)"),
     }).strict(),
     execute: async (args: { table_id: number; limit?: number }) => {
       try {
@@ -651,7 +651,7 @@ export function addTableTools(server: any, metabaseClient: MetabaseClient) {
     description: "Look up a field's ID and metadata by table and column name - essential for building parameter mappings. Returns field_id, base_type, and other metadata needed for filter connections.",
     metadata: { isRead: true, isEssential: true },
     parameters: z.object({
-      table_id: z.number().describe("Table ID to search in"),
+      table_id: z.coerce.number().describe("Table ID to search in"),
       column_name: z.string().describe("Column name to look up (searches both name and display_name)"),
     }).strict(),
     execute: async (args: { table_id: number; column_name: string }) => {

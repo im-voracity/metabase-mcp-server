@@ -41,7 +41,7 @@ export function addDatabaseTools(server: any, metabaseClient: MetabaseClient) {
     description: "Retrieve detailed information about a specific Metabase database including connection details and schema - use this to examine database properties or troubleshoot connections",
     metadata: { isEssential: true, isRead: true },
     parameters: z.object({
-      database_id: z.number().describe("The ID of the database to retrieve"),
+      database_id: z.coerce.number().describe("The ID of the database to retrieve"),
     }).strict(),
     execute: async (args: { database_id: number }) => {
       try {
@@ -75,7 +75,7 @@ export function addDatabaseTools(server: any, metabaseClient: MetabaseClient) {
       name: z.string().describe("Display name for the database"),
       details: z.object({
         host: z.string().describe("Database host"),
-        port: z.union([z.string(), z.number()]).describe("Database port"),
+        port: z.union([z.string(), z.coerce.number()]).describe("Database port"),
         db: z.string().describe("Database name"),
         user: z.string().describe("Database username"),
         password: z.string().describe("Database password"),
@@ -115,7 +115,7 @@ export function addDatabaseTools(server: any, metabaseClient: MetabaseClient) {
     description: "Update database configuration including name, connection details, and sync settings - use this to maintain connections, update credentials, or modify sync behavior",
     metadata: { isWrite: true },
     parameters: z.object({
-      database_id: z.number().describe("The ID of the database to update"),
+      database_id: z.coerce.number().describe("The ID of the database to update"),
       name: z.string().optional().describe("New display name for the database"),
       engine: z.string().optional().describe("Database engine type"),
       details: z.object({}).passthrough().optional().describe("Updated database connection details"),
@@ -149,7 +149,7 @@ export function addDatabaseTools(server: any, metabaseClient: MetabaseClient) {
     description: "Permanently remove a database from Metabase - use with caution as this will break dependent content and cannot be undone",
     metadata: { isWrite: true },
     parameters: z.object({
-      database_id: z.number().describe("The ID of the database to delete"),
+      database_id: z.coerce.number().describe("The ID of the database to delete"),
     }).strict(),
     execute: async (args: { database_id: number }) => {
       try {
@@ -189,7 +189,7 @@ export function addDatabaseTools(server: any, metabaseClient: MetabaseClient) {
       engine: z.string().describe("Database engine type (e.g., postgres, mysql, redshift)"),
       details: z.object({
         host: z.string().describe("Database host"),
-        port: z.union([z.string(), z.number()]).describe("Database port"),
+        port: z.union([z.string(), z.coerce.number()]).describe("Database port"),
         db: z.string().describe("Database name"),
         user: z.string().describe("Database username"),
         password: z.string().describe("Database password"),
@@ -241,7 +241,7 @@ export function addDatabaseTools(server: any, metabaseClient: MetabaseClient) {
     name: "check_database_health",
     description: "Perform health check on database connection - use this to diagnose issues, monitor status, or troubleshoot sync problems",
     parameters: z.object({
-      database_id: z.number().describe("The ID of the database to check"),
+      database_id: z.coerce.number().describe("The ID of the database to check"),
     }).strict(),
     execute: async (args: { database_id: number }) => {
       try {
@@ -267,7 +267,7 @@ export function addDatabaseTools(server: any, metabaseClient: MetabaseClient) {
     name: "get_database_metadata",
     description: "Retrieve comprehensive database metadata including tables, fields, and relationships - use this to understand structure or build dynamic queries",
     parameters: z.object({
-      database_id: z.number().describe("The ID of the database"),
+      database_id: z.coerce.number().describe("The ID of the database"),
     }).strict(),
     execute: async (args: { database_id: number }) => {
       try {
@@ -293,7 +293,7 @@ export function addDatabaseTools(server: any, metabaseClient: MetabaseClient) {
     name: "list_database_schemas",
     description: "Retrieve all schema names in a database - use this to explore database organization or navigate multi-schema databases",
     parameters: z.object({
-      database_id: z.number().describe("The ID of the database"),
+      database_id: z.coerce.number().describe("The ID of the database"),
     }).strict(),
     execute: async (args: { database_id: number }) => {
       try {
@@ -320,7 +320,7 @@ export function addDatabaseTools(server: any, metabaseClient: MetabaseClient) {
     name: "get_database_schema",
     description: "Retrieve detailed information about a specific schema including tables and objects - use this to explore schema contents or understand organization",
     parameters: z.object({
-      database_id: z.number().describe("The ID of the database"),
+      database_id: z.coerce.number().describe("The ID of the database"),
       schema_name: z.string().describe("The name of the schema"),
     }).strict(),
     execute: async (args: { database_id: number; schema_name: string }) => {
@@ -350,7 +350,7 @@ export function addDatabaseTools(server: any, metabaseClient: MetabaseClient) {
     description: "Execute a native SQL query against a Metabase database - use this for custom data analysis, complex queries, or extracting specific data not available through existing cards",
     metadata: { isEssential: true},
     parameters: z.object({
-      database_id: z.number().describe("The ID of the database to query against"),
+      database_id: z.coerce.number().describe("The ID of the database to query against"),
       query: z.string().describe("The SQL query to execute"),
       parameters: z.array(z.object({
         type: z.string().optional().describe("Parameter type (e.g. 'category', 'date')"),
@@ -383,7 +383,7 @@ export function addDatabaseTools(server: any, metabaseClient: MetabaseClient) {
     description: "Initiate schema sync to update Metabase metadata cache - use this after database changes to recognize new tables, columns, or relationships",
     metadata: { isWrite: true },
     parameters: z.object({
-      database_id: z.number().describe("The ID of the database to sync"),
+      database_id: z.coerce.number().describe("The ID of the database to sync"),
     }).strict(),
     execute: async (args: { database_id: number }) => {
       try {

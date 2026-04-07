@@ -46,7 +46,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Retrieve detailed information about a specific Metabase dashboard including cards, layout, and settings - use this to examine dashboard structure or get configuration details",
     metadata: { isEssential: true, isRead: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard to retrieve"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard to retrieve"),
     }).strict(),
     execute: async (args: { dashboard_id: number }) => {
       try {
@@ -78,7 +78,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Retrieve all cards within a specific Metabase dashboard - use this to analyze dashboard content, understand data sources, or examine card configurations",
     metadata: { isEssential: true, isRead: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
     }).strict(),
     execute: async (args: { dashboard_id: number }) => {
       try {
@@ -111,7 +111,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Retrieve entities related to a Metabase dashboard - use this to discover related content, find similar analytical views, or understand dashboard relationships",
     metadata: { isRead: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
     }).strict(),
     execute: async (args: { dashboard_id: number }) => {
       try {
@@ -145,7 +145,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Retrieve revision history for a Metabase dashboard - use this to track dashboard evolution, review past changes, or restore previous versions",
     metadata: { isRead: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
     }).strict(),
     execute: async (args: { dashboard_id: number }) => {
       try {
@@ -291,7 +291,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Generate publicly accessible URL for a dashboard (requires superuser) - use this for external reporting, client dashboards, or public data sharing",
     metadata: { isWrite: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
     }).strict(),
     execute: async (args: { dashboard_id: number }) => {
       try {
@@ -330,7 +330,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
     description:
       "Create a copy of an existing dashboard with all cards and layout - use this to create templates, backups, or variations of analytical views",
     parameters: z.object({
-      from_dashboard_id: z.number().describe("The ID of the dashboard to copy"),
+      from_dashboard_id: z.coerce.number().describe("The ID of the dashboard to copy"),
       name: z.string().optional().describe("Name for the new dashboard copy"),
       description: z
         .string()
@@ -393,7 +393,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Add an existing card to a dashboard with optional parameter mappings - use this to build comprehensive dashboards by combining multiple visualizations",
     metadata: { isWrite: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
       cardId: z
         .number()
         .nullable()
@@ -403,10 +403,10 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
         .number()
         .optional()
         .describe("The tab ID to add the card to (for dashboards with tabs)"),
-      row: z.number().optional().describe("Row position for the card"),
-      col: z.number().optional().describe("Column position for the card"),
-      size_x: z.number().optional().describe("Width of the card"),
-      size_y: z.number().optional().describe("Height of the card"),
+      row: z.coerce.number().optional().describe("Row position for the card"),
+      col: z.coerce.number().optional().describe("Column position for the card"),
+      size_x: z.coerce.number().optional().describe("Width of the card"),
+      size_y: z.coerce.number().optional().describe("Height of the card"),
       visualization_settings: z
         .object({})
         .passthrough()
@@ -415,7 +415,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       parameter_mappings: z
         .array(z.object({
           parameter_id: z.string().describe("The parameter ID to map"),
-          card_id: z.number().describe("The card ID this mapping applies to"),
+          card_id: z.coerce.number().describe("The card ID this mapping applies to"),
           target: z.array(z.unknown()).describe("Target specification - e.g. ['dimension', ['field', field_id, {...}]] or ['variable', ['template-tag', name]]"),
         }).passthrough())
         .optional()
@@ -476,7 +476,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Add a text block or heading to a dashboard - use this for explanatory text, titles, or instructions",
     metadata: { isWrite: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
       text: z.string().describe("The text content (supports Markdown)"),
       display_type: z
         .enum(["heading", "text"])
@@ -487,10 +487,10 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
         .number()
         .optional()
         .describe("The tab ID to add the text to (for dashboards with tabs)"),
-      row: z.number().optional().default(0).describe("Row position"),
-      col: z.number().optional().default(0).describe("Column position"),
-      size_x: z.number().optional().default(18).describe("Width of the text block"),
-      size_y: z.number().optional().describe("Height of the text block"),
+      row: z.coerce.number().optional().default(0).describe("Row position"),
+      col: z.coerce.number().optional().default(0).describe("Column position"),
+      size_x: z.coerce.number().optional().default(18).describe("Width of the text block"),
+      size_y: z.coerce.number().optional().describe("Height of the text block"),
     }).strict(),
     execute: async (args: {
       dashboard_id: number;
@@ -554,7 +554,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
     description:
       "Mark a dashboard as favorite for quick access - use this to bookmark frequently accessed analytical views",
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
     }).strict(),
     execute: async (args: { dashboard_id: number }) => {
       try {
@@ -589,8 +589,8 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Restore a dashboard to a specific previous revision - use this to undo changes, restore deleted content, or return to known good configuration",
     metadata: { isWrite: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
-      revision_id: z.number().describe("The revision ID to revert to"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
+      revision_id: z.coerce.number().describe("The revision ID to revert to"),
     }).strict(),
     execute: async (args: { dashboard_id: number; revision_id: number }) => {
       try {
@@ -661,7 +661,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Save a dashboard object directly into a specific collection - use this for organized dashboard creation or bulk imports",
     metadata: { isWrite: true },
     parameters: z.object({
-      parent_collection_id: z.number().describe("The parent collection ID"),
+      parent_collection_id: z.coerce.number().describe("The parent collection ID"),
       dashboard: z
         .object({})
         .passthrough()
@@ -706,7 +706,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Update dashboard properties including name, description, parameters, and settings - use this to maintain metadata, reorganize content, or configure sharing",
     metadata: { isWrite: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard to update"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard to update"),
       name: z.string().optional().describe("New name for the dashboard"),
       description: z
         .string()
@@ -743,7 +743,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
         .passthrough()
         .optional()
         .describe("Embedding parameters"),
-      position: z.number().optional().describe("Dashboard position"),
+      position: z.coerce.number().optional().describe("Dashboard position"),
     }).strict(),
     execute: async (args: { dashboard_id: number; [key: string]: any }) => {
       try {
@@ -786,16 +786,16 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "⚠️ DANGER: REPLACES ALL dashboard cards - any cards not in the array will be DELETED. To update a single card, first get_dashboard to fetch ALL cards, then include ALL of them with your modifications. This affects ALL tabs.",
     metadata: { isWrite: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
       cards: z
         .array(
           z
             .object({
-              id: z.number().describe("Card ID"),
-              size_x: z.number().optional().describe("Width of the card"),
-              size_y: z.number().optional().describe("Height of the card"),
-              row: z.number().optional().describe("Row position"),
-              col: z.number().optional().describe("Column position"),
+              id: z.coerce.number().describe("Card ID"),
+              size_x: z.coerce.number().optional().describe("Width of the card"),
+              size_y: z.coerce.number().optional().describe("Height of the card"),
+              row: z.coerce.number().optional().describe("Row position"),
+              col: z.coerce.number().optional().describe("Column position"),
               series: z
                 .array(z.object({}).passthrough())
                 .optional()
@@ -839,7 +839,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Delete or archive a dashboard (soft or hard delete) - use with caution as permanent deletion cannot be undone",
     metadata: { isWrite: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard to delete"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard to delete"),
       hard_delete: z
         .boolean()
         .optional()
@@ -887,7 +887,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Remove public URL access for a dashboard (requires superuser) - use this to revoke external access for security or privacy reasons",
     metadata: { isWrite: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
     }).strict(),
     execute: async (args: { dashboard_id: number }) => {
       try {
@@ -928,8 +928,8 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Remove specific dashcards from a dashboard by their dashcard IDs (not card_id) - use this to clean up dashboards or reorganize content",
     metadata: { isWrite: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
-      dashcard_ids: z.array(z.number()).describe("Array of dashcard IDs to remove (the 'id' field from dashcards, not 'card_id')"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
+      dashcard_ids: z.array(z.coerce.number()).describe("Array of dashcard IDs to remove (the 'id' field from dashcards, not 'card_id')"),
     }).strict(),
     execute: async (args: { dashboard_id: number; dashcard_ids: number[] }) => {
       try {
@@ -963,7 +963,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
     description:
       "Remove a dashboard from the user's favorites list - use this to clean up bookmarked dashboards",
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
     }).strict(),
     execute: async (args: { dashboard_id: number }) => {
       try {
@@ -1001,7 +1001,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       dashboard_id: z
         .number()
         .describe("The ID of the dashboard containing the card"),
-      card_id: z.number().describe("The ID of the card to execute"),
+      card_id: z.coerce.number().describe("The ID of the card to execute"),
     }).strict(),
     execute: async (args: { dashboard_id: number; card_id: number }) => {
       try {
@@ -1088,19 +1088,19 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Update a specific dashcard's properties without affecting other cards - use for parameter_mappings, visualization_settings, position, or size changes. Much safer than update_dashboard_cards.",
     metadata: { isWrite: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
-      dashcard_id: z.number().describe("The dashcard 'id' field (not card_id)"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
+      dashcard_id: z.coerce.number().describe("The dashcard 'id' field (not card_id)"),
       updates: z.object({
         parameter_mappings: z.array(z.object({
           parameter_id: z.string().describe("The parameter ID to map"),
-          card_id: z.number().describe("The card ID this mapping applies to"),
+          card_id: z.coerce.number().describe("The card ID this mapping applies to"),
           target: z.array(z.unknown()).describe("Target specification - e.g. ['dimension', ['field', field_id, {...}]] or ['variable', ['template-tag', name]]"),
         }).passthrough()).optional().describe("Parameter mappings for connecting filters"),
         visualization_settings: z.object({}).passthrough().optional().describe("Visualization settings"),
-        row: z.number().optional().describe("Row position"),
-        col: z.number().optional().describe("Column position"),
-        size_x: z.number().optional().describe("Width of the card"),
-        size_y: z.number().optional().describe("Height of the card"),
+        row: z.coerce.number().optional().describe("Row position"),
+        col: z.coerce.number().optional().describe("Column position"),
+        size_x: z.coerce.number().optional().describe("Width of the card"),
+        size_y: z.coerce.number().optional().describe("Height of the card"),
       }).passthrough().describe("Properties to update on the dashcard"),
     }).strict(),
     execute: async (args: { dashboard_id: number; dashcard_id: number; updates: any }) => {
@@ -1138,7 +1138,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Extract all queries from a dashboard with IDs resolved to actual table/column names - use this to understand dashboard data sources, audit queries, or plan migrations",
     metadata: { isRead: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
     }).strict(),
     execute: async (args: { dashboard_id: number }) => {
       try {
@@ -1354,7 +1354,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       "Analyze dashboard filter connections to find unconnected or misconfigured cards - use this to diagnose filter issues and ensure all cards are properly connected",
     metadata: { isRead: true },
     parameters: z.object({
-      dashboard_id: z.number().describe("The ID of the dashboard to audit"),
+      dashboard_id: z.coerce.number().describe("The ID of the dashboard to audit"),
     }).strict(),
     execute: async (args: { dashboard_id: number }) => {
       try {
