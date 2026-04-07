@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MetabaseClient } from "../client/metabase-client.js";
+import { parseIfString } from "../utils/zod-helpers.js";
 
 export function addCardTools(server: any, metabaseClient: MetabaseClient) {
 
@@ -85,11 +86,9 @@ export function addCardTools(server: any, metabaseClient: MetabaseClient) {
     parameters: z.object({
       name: z.string().describe("Card name"),
       description: z.string().optional().describe("Description"),
-      dataset_query: z.unknown().optional().describe("Dataset query object - fully preserved including nested MBQL arrays"),
+      dataset_query: z.preprocess(parseIfString, z.unknown()).optional().describe("Dataset query object - fully preserved including nested MBQL arrays"),
       display: z.string().optional().describe("Visualization type"),
-      visualization_settings: z
-        .object({})
-        .passthrough()
+      visualization_settings: z.preprocess(parseIfString, z.object({}).passthrough())
         .optional()
         .describe("Visualization settings"),
       collection_id: z.coerce.number().optional().describe("Collection to save in"),
@@ -125,10 +124,8 @@ export function addCardTools(server: any, metabaseClient: MetabaseClient) {
     metadata: { isWrite: true },
     parameters: z.object({
       card_id: z.coerce.number().describe("Card ID"),
-      updates: z.object({}).passthrough().describe("Fields to update"),
-      query_params: z
-        .object({})
-        .passthrough()
+      updates: z.preprocess(parseIfString, z.object({}).passthrough()).describe("Fields to update"),
+      query_params: z.preprocess(parseIfString, z.object({}).passthrough())
         .optional()
         .describe("Optional query parameters for update"),
     }).strict(),

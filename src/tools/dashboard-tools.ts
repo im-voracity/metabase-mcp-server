@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MetabaseClient } from "../client/metabase-client.js";
+import { parseIfString } from "../utils/zod-helpers.js";
 
 export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
   /**
@@ -242,8 +243,7 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
         .string()
         .optional()
         .describe("Description of the dashboard"),
-      parameters: z
-        .array(z.object({}).passthrough())
+      parameters: z.preprocess(parseIfString, z.array(z.object({}).passthrough()))
         .optional()
         .describe("Dashboard parameters array"),
       collection_id: z
@@ -407,21 +407,17 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
       col: z.coerce.number().optional().describe("Column position for the card"),
       size_x: z.coerce.number().optional().describe("Width of the card"),
       size_y: z.coerce.number().optional().describe("Height of the card"),
-      visualization_settings: z
-        .object({})
-        .passthrough()
+      visualization_settings: z.preprocess(parseIfString, z.object({}).passthrough())
         .optional()
         .describe("Visualization settings (required for text cards)"),
-      parameter_mappings: z
-        .array(z.object({
+      parameter_mappings: z.preprocess(parseIfString, z.array(z.object({
           parameter_id: z.string().describe("The parameter ID to map"),
           card_id: z.coerce.number().describe("The card ID this mapping applies to"),
-          target: z.array(z.unknown()).describe("Target specification - e.g. ['dimension', ['field', field_id, {...}]] or ['variable', ['template-tag', name]]"),
-        }).passthrough())
+          target: z.preprocess(parseIfString, z.array(z.unknown())).describe("Target specification"),
+        }).passthrough()))
         .optional()
         .describe("Parameter mappings for the card - connects dashboard filters to card fields"),
-      series: z
-        .array(z.object({}).passthrough())
+      series: z.preprocess(parseIfString, z.array(z.object({}).passthrough()))
         .optional()
         .describe("Series data for the card"),
     }).strict(),
@@ -1090,18 +1086,18 @@ export function addDashboardTools(server: any, metabaseClient: MetabaseClient) {
     parameters: z.object({
       dashboard_id: z.coerce.number().describe("The ID of the dashboard"),
       dashcard_id: z.coerce.number().describe("The dashcard 'id' field (not card_id)"),
-      updates: z.object({
-        parameter_mappings: z.array(z.object({
+      updates: z.preprocess(parseIfString, z.object({
+        parameter_mappings: z.preprocess(parseIfString, z.array(z.object({
           parameter_id: z.string().describe("The parameter ID to map"),
           card_id: z.coerce.number().describe("The card ID this mapping applies to"),
-          target: z.array(z.unknown()).describe("Target specification - e.g. ['dimension', ['field', field_id, {...}]] or ['variable', ['template-tag', name]]"),
-        }).passthrough()).optional().describe("Parameter mappings for connecting filters"),
-        visualization_settings: z.object({}).passthrough().optional().describe("Visualization settings"),
+          target: z.preprocess(parseIfString, z.array(z.unknown())).describe("Target specification"),
+        }).passthrough())).optional().describe("Parameter mappings for connecting filters"),
+        visualization_settings: z.preprocess(parseIfString, z.object({}).passthrough()).optional().describe("Visualization settings"),
         row: z.coerce.number().optional().describe("Row position"),
         col: z.coerce.number().optional().describe("Column position"),
         size_x: z.coerce.number().optional().describe("Width of the card"),
         size_y: z.coerce.number().optional().describe("Height of the card"),
-      }).passthrough().describe("Properties to update on the dashcard"),
+      }).passthrough()).describe("Properties to update on the dashcard"),
     }).strict(),
     execute: async (args: { dashboard_id: number; dashcard_id: number; updates: any }) => {
       try {
