@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { MetabaseClient } from "../client/metabase-client.js";
+import { parseIfString } from "../utils/zod-helpers.js";
 
 export function addAdditionalTools(server: any, metabaseClient: MetabaseClient) {
 
@@ -101,17 +102,25 @@ export function addAdditionalTools(server: any, metabaseClient: MetabaseClient) 
     parameters: z.object({
       q: z.string().min(1).describe("Search query"),
       type: z.string().optional().describe("Filter by type (card, dashboard, collection, table, etc.)"),
-      models: z.array(z.string()).optional().describe("Filter by model types"),
-      archived: z.boolean().optional().describe("Include archived items"),
+      models: z.preprocess(parseIfString, z.array(z.string())).optional().describe("Filter by model types (e.g. [\"card\", \"dashboard\"])"),
+      archived: z.preprocess(parseIfString, z.boolean()).optional().describe("Include archived items"),
+      search_native_query: z.preprocess(parseIfString, z.boolean()).optional().describe("Also match against the SQL text of native questions"),
       table_db_id: z.coerce.number().optional().describe("Filter by database ID"),
       limit: z.coerce.number().optional().describe("Maximum number of results"),
+      offset: z.coerce.number().optional().describe("Number of results to skip, for paging"),
     }).strict(),
     execute: async (args: any) => {
       try {
         const { q, ...other } = args;
         const params = new URLSearchParams({ q });
         Object.entries(other).forEach(([k, v]) => {
-          if (v !== undefined && v !== null) params.append(k, String(v));
+          if (v === undefined || v === null) return;
+          // Metabase expects repeated keys for array filters (models=card&models=dashboard)
+          if (Array.isArray(v)) {
+            v.forEach((item) => params.append(k, String(item)));
+            return;
+          }
+          params.append(k, String(v));
         });
         const url = `/api/search?${params.toString()}`;
         const result = await metabaseClient.apiCall("GET", url);
